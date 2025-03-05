@@ -1,39 +1,48 @@
-import java.util.Arrays;
-
 public class MinimumRewards {
-    public static void main(String[] args) {
-        // Example 1
-        int[] ratings1 = {1, 0, 2};
-        int totalRewards1 = calculateMinimumRewards(ratings1);
-        System.out.println("Input: ratings = [1, 0, 2]");
-        System.out.println("Output: Minimum rewards needed: " + totalRewards1);
 
-        // Example 2
-        int[] ratings2 = {1, 2, 2};
-        int totalRewards2 = calculateMinimumRewards(ratings2);
-        System.out.println("Input: ratings = [1, 2, 2]");
-        System.out.println("Output: Minimum rewards needed: " + totalRewards2);
-    }
+    public static int MinRewards(int[] ratings) {
+        // Validate the ratings array
+        if (ratings == null || ratings.length == 0) {
+            return 0;
+        }
+        if (ratings.length == 1) {
+            return 1;
+        }
 
-    public static int calculateMinimumRewards(int[] ratings) {
-        int[] rewards = new int[ratings.length];
-        Arrays.fill(rewards, 1);
+        int n = ratings.length;
+        int[] rewards = new int[n];
 
-        // Left to Right pass
-        for (int i = 1; i < ratings.length; i++) {
+        // Initialize all rewards to 1 (each employee gets at least 1 reward)
+        for (int i = 0; i < n; i++) {
+            rewards[i] = 1;
+        }
+
+        // Left-to-right traversal
+        for (int i = 1; i < n; i++) {
             if (ratings[i] > ratings[i - 1]) {
                 rewards[i] = rewards[i - 1] + 1;
             }
         }
 
-        // Right to Left pass
-        for (int i = ratings.length - 2; i >= 0; i--) {
+        // Right-to-left traversal
+        for (int i = n - 2; i >= 0; i--) {
             if (ratings[i] > ratings[i + 1]) {
                 rewards[i] = Math.max(rewards[i], rewards[i + 1] + 1);
             }
         }
 
-        // Sum total rewards
-        return Arrays.stream(rewards).sum();
+        // Calculate the total minimum rewards
+        int totalRewards = 0;
+        for (int reward : rewards) {
+            totalRewards += reward;
+        }
+
+        return totalRewards;
+    }
+
+    public static void main(String[] args) {
+        int[] ratings = {3, 6, 2, 1, 4, 5}; // Example input
+        int result =  MinRewards(ratings);
+        System.out.println("Total Minimum Rewards: " + result); // Output: 10
     }
 }

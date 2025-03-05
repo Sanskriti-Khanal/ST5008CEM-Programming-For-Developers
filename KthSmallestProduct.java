@@ -1,23 +1,76 @@
-import java.util.Arrays;
+class BSTNode {
+    int product;
+    BSTNode left, right;
+
+    public BSTNode(int i, int j, int product) {
+        this.product = product;
+        this.left = this.right = null;
+    }
+}
+
+class BST {
+    private BSTNode root;
+    private int count;
+    private int kthSmallestValue;
+
+    public BST() {
+        this.root = null;
+        this.count = 0;
+        this.kthSmallestValue = -1;
+    }
+
+    public void insert(int i, int j, int product) {
+        root = insertRec(root, i, j, product);
+    }
+
+    private BSTNode insertRec(BSTNode root, int i, int j, int product) {
+        if (root == null) {
+            return new BSTNode(i, j, product);
+        }
+        if (product < root.product) {
+            root.left = insertRec(root.left, i, j, product);
+        } else {
+            root.right = insertRec(root.right, i, j, product);
+        }
+        return root;
+    }
+
+    public int kthSmallest(int k) {
+        count = 0;
+        kthSmallestValue = -1;
+        inOrderTraversal(root, k);
+        return kthSmallestValue;
+    }
+
+    private void inOrderTraversal(BSTNode root, int k) {
+        if (root == null || count >= k) {
+            return;
+        }
+        inOrderTraversal(root.left, k);
+        count++;
+        if (count == k) {
+            kthSmallestValue = root.product;
+            return;
+        }
+        inOrderTraversal(root.right, k);
+    }
+}
 
 public class KthSmallestProduct {
-    public static void main(String[] args) {
-        // Example 1
-        int[] returns1 = {2, 5};
-        int[] returns2 = {3, 4};
-        int k = 2;
-        int[] products = new int[returns1.length * returns2.length]; 
-        for(int i=0,idx=0;i<returns1.length;i++)for(int j=0;j<returns2.length;j++)products[idx++]=returns1[i]*returns2[j]; 
-        Arrays.sort(products); 
-        System.out.println("Example 1 Output: " + products[k-1]);
+    public static int findKthSmallestProduct(int[] returns1, int[] returns2, int k) {
+        BST bst = new BST();
+        for (int i = 0; i < returns1.length; i++) {
+            for (int j = 0; j < returns2.length; j++) {
+                bst.insert(i, j, returns1[i] * returns2[j]);
+            }
+        }
+        return bst.kthSmallest(k);
+    }
 
-        // Example 2
-        int[] returns1_2 = {-4, -2, 0, 3};
-        int[] returns2_2 = {2, 4};
-        int k2 = 6;
-        int[] products2 = new int[returns1_2.length * returns2_2.length]; 
-        for(int i=0,idx=0;i<returns1_2.length;i++)for(int j=0;j<returns2_2.length;j++)products2[idx++]=returns1_2[i]*returns2_2[j]; 
-        Arrays.sort(products2); 
-        System.out.println("Example 2 Output: " + products2[k2-1]);
+    public static void main(String[] args) {
+        int[] returns1 = {1, 3, 5};
+        int[] returns2 = {2, 4, 6};
+        int k = 4;
+        System.out.println("The " + k + "th smallest product is: " + findKthSmallestProduct(returns1, returns2, k));
     }
 }
